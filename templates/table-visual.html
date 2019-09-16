@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="    https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
+
+</head>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+
+<script>
+    let exists = "{{ exists }}";
+    if (exists === "True"){
+        alert("This Boi is Gucci");
+    }else if (exists === "False"){
+        alert("No Record Found");
+    }
+
+    $(document).ready( function () {
+        var selected = $('.dataframe');
+        selected.addClass("table table-striped table-bordered table-sm");
+        selected.DataTable({"scrollX": true});
+    } );
+
+</script>
+<body>
+    <div class="container">
+        {{ table_visual|safe }}
+    </div>
+    {% if date_initialized  %}
+        <div class="container">
+            <form action="" method="POST">
+                Scanner Input:
+                <input type="text" value="" name="scannerInput" autofocus>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    {% else %}
+        <div class="container">
+            <form action="/set-date-today" method="POST">
+                <input type="submit" class="btn btn-success" value="Start Session">
+            </form>
+        </div>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+build/*
+venv/
+*.pyc
+*.csv
+.idea/
+dist/app.app/*
