@@ -17,14 +17,13 @@ def resource_path(relative_path):
 if getattr(sys, 'frozen', False):
     template_folder = resource_path('templates')
     static_folder = resource_path('static')
-    current_dir = os.path.dirname(sys.argv[0]) + "/"
     app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
 else:
-    current_dir = ""
     app = Flask(__name__)
 
+current_dir = os.path.dirname(sys.argv[0])
 processor = None
-
+print(current_dir)
 
 @app.route('/')
 def hello_world():
@@ -35,7 +34,11 @@ def hello_world():
 def init():
     global processor
     global current_dir
-    csvs = glob.glob(current_dir + '*.csv')
+    csv_dir = os.path.join(current_dir, "*.csv")
+    print(csv_dir)
+    print(current_dir)
+    csvs = glob.glob(csv_dir)
+    print(csvs)
     if len(csvs) != 0:
         processor = BoxingClubProcessor(fileName=csvs[0])
     return redirect('/table')
