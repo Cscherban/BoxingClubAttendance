@@ -9,12 +9,12 @@ Run the appropriately named executable in the same director as the csv file that
 ###Generating a New executable 
 Windows:
 
-`pyinstaller -w -F -n windowsVersion --add-data "templates;templates" --add-data "static;static" app.py`
+`pyinstaller -w -F -n windowsVersion --add-data "templates;templates" app.py`
 
 Linux:
 
-`pyinstaller -w -F -n linuxVersion --add-data "templates:templates" --add-data "static:static" app.py`
+`pyinstaller -w -F -n linuxVersion --add-data "templates:templates" app.py`
 
 Mac:
 
-`pyinstaller -w -F -n macVersion --add-data "templates:templates" --add-data "static:static" app.py`
+`pyinstaller -w -F -n macVersion --add-data "templates:templates" app.py`
