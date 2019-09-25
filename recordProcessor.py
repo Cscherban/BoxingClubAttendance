@@ -9,8 +9,12 @@ class BoxingClubProcessor():
         if not os.path.exists(fileName):
             raise ValueError("Please provide a valid file")
         self.csvFileName = fileName
-        self.csvAsDataFrame = pd.read_csv(fileName)
+        df = pd.read_csv(fileName).dropna(axis=0,how='all').dropna(axis=1,how='all')
+        df = df.fillna(value={"GTID" : 0}).fillna(value="--")
+        df["GTID"] = df["GTID"].astype(int,errors='ignore')
+        self.csvAsDataFrame = df
         self.date = date
+        print self.csvAsDataFrame
         print(self.csvFileName)
 
 
