@@ -5,3 +5,8 @@ venv/
 .idea/
 dist/*/*
 *.spec
+Include/
+Libs/
+Lib/
+Scripts/
+tcl/
