@@ -24,7 +24,7 @@ else:
     app = Flask(__name__)
 
 processor = None
-
+error = "None"
 
 @app.route('/')
 def hello_world():
@@ -33,8 +33,10 @@ def hello_world():
 
 @app.route('/initialize', methods=['POST'])
 def init():
+    global error
     global processor
     global current_dir
+    error = "None"
     csvs = glob.glob(current_dir + '*.csv')
     if len(csvs) != 0:
         processor = BoxingClubProcessor(fileName=csvs[0])
@@ -56,30 +58,43 @@ def terminate():
     os._exit(0)
     return None
 
-
-@app.route('/table', methods=['GET', 'POST'])
-def handle_table():
+@app.route('/add-new-person', methods=['POST'])
+def add_new_person():
     global processor
     if processor is None:
         return redirect('/')
 
-    date_set = processor.date is not None
-
     if request.method == 'POST':
-        scanner_input = request.form.get('scannerInput')
-        gtid = processor.process_scanner_output(scanner_input)
-        print(gtid)
-        if gtid is None:
-            return render_template("table-visual.html", invalid="true", date_initialized=date_set,table_visual=processor.get_html())
-        print("his")
-        exists = processor.check_exists(gtid)
-        print exists
-        if exists:
-            processor.mark_as_attended(gtid)
-        return render_template("table-visual.html", exists=exists, date_initialized=date_set, table_visual=processor.get_html())
-    else:
-        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set)
+        name = request.form.get('name')
+        gtid = request.form.get('gtid')
+        processor.add_new_person(gtid,name)
+        return redirect('/table')
 
+@app.route('/table', methods=['GET', 'POST'])
+def handle_table():
+    global error
+    global processor
+    error = "None"
+    if processor is None:
+        return redirect('/')
+
+    date_set = processor.date is not None
+    try:
+        if request.method == 'POST':
+            scanner_input = request.form.get('scannerInput')
+            gtid = processor.process_scanner_output(scanner_input)
+            print(gtid)
+            if gtid is None:
+                return render_template("table-visual.html", invalid="true", date_initialized=date_set,table_visual=processor.get_html(), error=error)
+            exists = processor.check_exists(gtid)
+            print exists
+            if exists:
+                processor.mark_as_attended(gtid)
+            return render_template("table-visual.html", exists=exists, date_initialized=date_set, table_visual=processor.get_html(), error=error)
+        else:
+            return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set, error=error)
+    except Exception as e:
+        error = str(e)
 
 @app.route('/person/<gtid>', methods=['POST', 'DELETE'])
 def person_stuff(gtid):

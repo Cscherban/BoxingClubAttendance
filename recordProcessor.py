@@ -63,6 +63,7 @@ class BoxingClubProcessor():
         df = self.csvAsDataFrame
         dict = {df.columns[i] : "--" for i in range(len(df.columns))}
         dict["GTID"] = gtid
+        dict["Name"] = name
         df = df.append(dict, ignore_index=True)
         df.to_csv(self.csvFileName,index=False)
         self.csvAsDataFrame = df
