@@ -11,12 +11,17 @@ class BoxingClubProcessor():
         self.csvFileName = fileName
         self.csvAsDataFrame = pd.read_csv(fileName)
         self.date = date
+        print(self.csvFileName)
+
 
     def set_date(self, date):
         self.date = date
 
     @staticmethod
     def _extract_gtid(scanner_output):
+        if scanner_output is None:
+            return None
+
         split_output = scanner_output.split("=")
         if len(split_output) < 3:
             return None
@@ -59,9 +64,16 @@ class BoxingClubProcessor():
         df.to_csv(self.csvFileName,index=False)
         self.csvAsDataFrame = df
 
+    def _validate_gtid(self, gtid):
+        if len(gtid) != 9 or int(gtid) == 0:
+            return False
+        return True
+
     def add_new_person(self, gtid, name):
         df = self.csvAsDataFrame
         dict = {df.columns[i] : "--" for i in range(len(df.columns))}
+        if not self._validate_gtid(gtid) or self.check_exists(int(gtid)):
+            raise ValueError("Invalid GTID/User Already Exists")
         dict["GTID"] = gtid
         dict["Name"] = name
         df = df.append(dict, ignore_index=True)
@@ -74,6 +86,7 @@ class BoxingClubProcessor():
         df = self.csvAsDataFrame
         df.loc[df["GTID"] == gtid, [self.date]] = "Present"
         df.to_csv(self.csvFileName,index=False)
+        self.csvAsDataFrame = df
 
     def remove_gtid(self, gtid):
         df = self.csvAsDataFrame

@@ -63,15 +63,21 @@ def add_new_person():
     global error
     global processor
     error = "None"
+    try:
+        if processor is None:
+            return redirect('/')
 
-    if processor is None:
-        return redirect('/')
+        if request.method == 'POST':
+            name = request.form.get('name')
+            gtid = request.form.get('gtid')
+            processor.add_new_person(gtid,name)
+            return redirect('/table')
 
-    if request.method == 'POST':
-        name = request.form.get('name')
-        gtid = request.form.get('gtid')
-        processor.add_new_person(gtid,name)
-        return redirect('/table')
+    except Exception as e:
+        error = str(e)
+        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=True, error=error)
+
+
 
 @app.route('/table', methods=['GET', 'POST'])
 def handle_table():
@@ -98,9 +104,7 @@ def handle_table():
             return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set, error=error)
     except Exception as e:
         error = str(e)
-        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set,
-                               error=error)
-
+        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set, error=error)
 
 @app.route('/person/<gtid>', methods=['POST', 'DELETE'])
 def person_stuff(gtid):

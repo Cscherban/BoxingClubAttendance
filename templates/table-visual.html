@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>GT Boxing Club</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="    https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
 
 </head>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -21,7 +21,7 @@
         alert("No Record Found");
     }
     if (err !== "None"){
-        alert("Contact the Administrator. The Following Error has occured + \n" + err);
+        alert("Error!!! \n The Following Error has occurred:\n" + err);
     }
 
     $(document).ready( function () {
@@ -42,7 +42,7 @@
                 <div class="col col-sm">
                     <form action="" method="POST">
                         Scanner Input:
-                        <input type="text" value="" name="scannerInput" autofocus>
+                        <input type="text" value="" name="scannerInput" autofocus required>
                         <input type="submit" value="Submit">
                     </form>
                 </div>
@@ -72,10 +72,10 @@
                 <form action="/add-new-person" method="POST">
                        <div class="row">
                          <div class="col">
-                            <input type="text" name="name" class="form-control" placeholder="Enter Name">
+                            <input type="text" name="name" class="form-control" placeholder="Enter Name" required>
                          </div>
                          <div class="col">
-                            <input type="text" name="gtid" class="form-control" placeholder="Enter GTID">
+                            <input type="text" name="gtid" class="form-control" placeholder="Enter GTID" required>
                          </div>
                       </div>
                     <button type="submit" class="btn btn-info">Add New Member</button>
