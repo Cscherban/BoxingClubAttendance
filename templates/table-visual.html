@@ -14,10 +14,14 @@
 
 <script>
     let exists = "{{ exists }}";
+    let err = "{{ error }}";
     if (exists === "True"){
         alert("Marked as Here");
     }else if (exists === "False"){
         alert("No Record Found");
+    }
+    if (err !== "None"){
+        alert("Contact the Administrator. The Following Error has occured + \n" + err);
     }
 
     $(document).ready( function () {
@@ -31,27 +35,56 @@
     <div class="container">
         {{ table_visual|safe }}
     </div>
-    {% if date_initialized  %}
-        <div class="container">
-            <form action="" method="POST">
-                Scanner Input:
-                <input type="text" value="" name="scannerInput" autofocus>
-                <input type="submit" value="Submit">
-            </form>
-        </div>
-    {% else %}
-        <div class="container">
-            <form action="/set-date-today" method="POST">
-                <input type="submit" class="btn btn-success" value="Start Session">
-            </form>
-        </div>
-    {% endif %}
-
     <div class="container">
-        <form action="/terminate" method="GET">
-            <input type="submit" class="btn btn-danger" value="End Session">
-        </form>
+        <div class="row">
+
+            {% if date_initialized  %}
+                <div class="col col-sm">
+                    <form action="" method="POST">
+                        Scanner Input:
+                        <input type="text" value="" name="scannerInput" autofocus>
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            {% else %}
+                <div class="col col-sm">
+                    <form action="/set-date-today" method="POST">
+                        <input type="submit" class="btn btn-success" value="Start Session">
+                    </form>
+                </div>
+            {% endif %}
+
+                <div class="col col-sm">
+                    <form action="/terminate" method="GET">
+                        <input type="submit" class="btn btn-danger" value="End Session">
+                    </form>
+                </div>
+        </div>
+
     </div>
+
+    <br><br>
+    <br><br>
+    <div class="container">
+          <div class="row">
+            <div class="col-xs">
+                <h4>Add a Person to Roster</h4>
+                <form action="/add-new-person" method="POST">
+                       <div class="row">
+                         <div class="col">
+                            <input type="text" name="name" class="form-control" placeholder="Enter Name">
+                         </div>
+                         <div class="col">
+                            <input type="text" name="gtid" class="form-control" placeholder="Enter GTID">
+                         </div>
+                      </div>
+                    <button type="submit" class="btn btn-info">Add New Member</button>
+                </form>
+            </div>
+          </div>
+    </div>
+    <br><br>
+    <br><br>
 
 </body>
 </html>
