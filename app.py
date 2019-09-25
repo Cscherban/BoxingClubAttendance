@@ -51,6 +51,12 @@ def set_today_as_recording_date():
     return redirect('/table')
 
 
+@app.route('/terminate', methods=['GET'])
+def terminate():
+    os._exit(0)
+    return None
+
+
 @app.route('/table', methods=['GET', 'POST'])
 def handle_table():
     global processor
