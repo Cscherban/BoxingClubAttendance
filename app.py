@@ -37,7 +37,10 @@ def init():
     global processor
     global current_dir
     error = "None"
-    csv_dir = os.path.join(current_dir, "*.csv")
+    if getattr(sys, 'frozen', False):
+        csv_dir = os.path.join(current_dir, "*.csv")
+    else:
+        csv_dir = "*.csv"
     print(csv_dir)
     print(current_dir)
     csvs = glob.glob(csv_dir)
