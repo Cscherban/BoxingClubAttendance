@@ -60,7 +60,10 @@ def terminate():
 
 @app.route('/add-new-person', methods=['POST'])
 def add_new_person():
+    global error
     global processor
+    error = "None"
+
     if processor is None:
         return redirect('/')
 
@@ -95,6 +98,9 @@ def handle_table():
             return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set, error=error)
     except Exception as e:
         error = str(e)
+        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=date_set,
+                               error=error)
+
 
 @app.route('/person/<gtid>', methods=['POST', 'DELETE'])
 def person_stuff(gtid):
