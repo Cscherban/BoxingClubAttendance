@@ -37,26 +37,38 @@ def init():
     global processor
     global current_dir
     error = "None"
-    if getattr(sys, 'frozen', False):
-        csv_dir = os.path.join(current_dir, "*.csv")
-    else:
-        csv_dir = "*.csv"
-    print(csv_dir)
-    print(current_dir)
-    csvs = glob.glob(csv_dir)
-    print(csvs)
-    if len(csvs) != 0:
-        processor = BoxingClubProcessor(fileName=csvs[0])
+    try:
+        if getattr(sys, 'frozen', False):
+            csv_dir = os.path.join(current_dir, "*.csv")
+        else:
+            csv_dir = "*.csv"
+        print(csv_dir)
+        print(current_dir)
+        csvs = glob.glob(csv_dir)
+        print(csvs)
+        if len(csvs) != 0:
+            processor = BoxingClubProcessor(fileName=csvs[0])
+    except Exception as e:
+        error = str(e)
+        return render_template("start-screen.html", error=error)
+
     return redirect('/table')
 
 
 @app.route('/set-date-today', methods=['POST'])
 def set_today_as_recording_date():
     global processor
+    global error
     tz = timezone('US/Eastern')
-    date_string = datetime.now(tz).today().strftime('%m-%d-%Y')
-    processor.set_date(date_string)
-    processor.add_date_to_csv(date_string)
+    try:
+        date_string = datetime.now(tz).today().strftime('%m/%d/%Y')
+        processor.set_date(date_string)
+        processor.add_date_to_csv(date_string)
+    except Exception as e:
+        error = str(e)
+        return render_template("table-visual.html", table_visual=processor.get_html(), date_initialized=True,
+                               error=error)
+
     return redirect('/table')
 
 
