@@ -9,9 +9,21 @@ class BoxingClubProcessor():
         if not os.path.exists(fileName):
             raise ValueError("Please provide a valid file")
         self.csvFileName = fileName
-        df = pd.read_csv(fileName).dropna(axis=0,how='all').dropna(axis=1,how='all')
-        df = df.fillna(value={"GTID" : 0}).fillna(value="--")
-        df["GTID"] = df["GTID"].astype(int,errors='ignore')
+
+        try:
+            df = pd.read_csv(fileName).dropna(axis=0,how='all').dropna(axis=1,how='all')
+        except Exception as e:
+            print(e)
+            raise Exception("Something went wrong with reading the file: \nError Code " + str(e))
+
+        df = df.fillna(value={"GTID": 0}).fillna(value="--")
+
+        try:
+            df["GTID"] = df["GTID"].astype(int,errors='ignore')
+        except Exception as e:
+            print(e)
+            raise ValueError("Make sure your CSV is has numbers in the GTID column")
+
         self.csvAsDataFrame = df
         self.date = date
         print self.csvAsDataFrame
@@ -40,6 +52,14 @@ class BoxingClubProcessor():
             # Handle the exception
             return None
 
+    def _save_dataframe(self, df):
+        try:
+            df.to_csv(self.csvFileName, index=False)
+            self.csvAsDataFrame = df
+        except Exception as e:
+            raise Exception("Unable to write to file, or make changes to data-frame." +
+                            " Make sure the file is not open in another program")
+
     def process_scanner_output(self, scanner_output):
         return self._extract_gtid(scanner_output)
 
@@ -57,16 +77,14 @@ class BoxingClubProcessor():
         try:
             df.insert(loc=num_cols, column=date, value=["--" for i in range(num_rows)])
         except:
-            return
+            raise Exception("Unable to insert date, corrupted csv")
 
-        df.to_csv(self.csvFileName,index=False)
-        self.csvAsDataFrame = df
+        self._save_dataframe(df)
 
     def remove_date_from_csv(self, date):
         df = self.csvAsDataFrame
         df = df.drop(columns=date)
-        df.to_csv(self.csvFileName,index=False)
-        self.csvAsDataFrame = df
+        self._save_dataframe(df)
 
     def _validate_gtid(self, gtid):
         if len(gtid) != 9 or int(gtid) == 0:
@@ -76,27 +94,27 @@ class BoxingClubProcessor():
     def add_new_person(self, gtid, name):
         df = self.csvAsDataFrame
         dict = {df.columns[i] : "--" for i in range(len(df.columns))}
-        if not self._validate_gtid(gtid) or self.check_exists(int(gtid)):
-            raise ValueError("Invalid GTID/User Already Exists")
+        if not self._validate_gtid(gtid):
+            raise ValueError("Invalid GTID")
+        elif self.check_exists(int(gtid)):
+            raise ValueError("User already exists")
+
         dict["GTID"] = gtid
         dict["Name"] = name
         df = df.append(dict, ignore_index=True)
-        df.to_csv(self.csvFileName,index=False)
-        self.csvAsDataFrame = df
+        self._save_dataframe(df)
 
     def mark_as_attended(self, gtid):
         if self.date is None:
             return False
         df = self.csvAsDataFrame
         df.loc[df["GTID"] == gtid, [self.date]] = "Present"
-        df.to_csv(self.csvFileName,index=False)
-        self.csvAsDataFrame = df
+        self._save_dataframe(df)
 
     def remove_gtid(self, gtid):
         df = self.csvAsDataFrame
         df = df.drop(gtid, axis=0)
-        df.to_csv(self.csvFileName,index=False)
-        self.csvAsDataFrame = df
+        self._save_dataframe(df)
 
     def check_exists(self, gtid):
         df = self.csvAsDataFrame
