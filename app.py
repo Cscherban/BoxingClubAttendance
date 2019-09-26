@@ -28,7 +28,8 @@ print(current_dir)
 
 @app.route('/')
 def hello_world():
-    return render_template("start-screen.html")
+    global error
+    return render_template("start-screen.html", error=error)
 
 
 @app.route('/initialize', methods=['POST'])
@@ -48,9 +49,10 @@ def init():
         print(csvs)
         if len(csvs) != 0:
             processor = BoxingClubProcessor(fileName=csvs[0])
+
     except Exception as e:
         error = str(e)
-        return render_template("start-screen.html", error=error)
+        return redirect('/')
 
     return redirect('/table')
 
